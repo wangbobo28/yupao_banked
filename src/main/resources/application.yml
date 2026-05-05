@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: yupao-bankend
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/user
+    username: root
+    password:
+  session:
+    timeout: 86400
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+
+server:
+  port: 8080
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#  global-config:
+#    db-config:
+#      logic-delete-field: isDelete
+#      logic-delete-value: 1
+#      logic-not-delete-value: 0
+

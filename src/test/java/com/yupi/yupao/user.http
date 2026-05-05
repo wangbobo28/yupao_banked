@@ -1,0 +1,11 @@
+#GET http://localhost:8080/user/search?username=wangli
+
+#GET http://localhost:8080/user/search?username=wangli
+#
+#GET http://localhost:8080/user/search?username=wangli
+#
+#
+#GET http://localhost:8080/user/search/tags?
+
+GET http://localhost:8080/user/search/tags?tagNameList=python&tagNameList=java
+#Accept: application/json

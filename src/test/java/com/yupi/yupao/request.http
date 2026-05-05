@@ -1,0 +1,16 @@
+#POST http://localhost:8080/user/login
+#Content-Type: application/json
+#
+#{
+#  "userAccount": "bobo",
+#  "userPassword": "123456789"
+#}
+
+POST http://localhost:8080/user/register
+Content-Type: application/json
+
+{
+  "userAccount": "wangli",
+  "userPassword": "123456789",
+  "checkPassword": "123456789"
+}
