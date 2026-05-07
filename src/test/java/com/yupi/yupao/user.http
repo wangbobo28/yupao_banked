@@ -7,5 +7,14 @@
 #
 #GET http://localhost:8080/user/search/tags?
 
-GET http://localhost:8080/user/search/tags?tagNameList=python&tagNameList=java
+#GET http://localhost:8080/user/search/tags?tagNameList=python&tagNameList=java
 #Accept: application/json
+
+### 登录获取Cookie
+POST http://localhost:8080/api/user/login
+Content-Type: application/json
+
+{
+  "userAccount": "123456789",
+  "userPassword": "123456789"
+}

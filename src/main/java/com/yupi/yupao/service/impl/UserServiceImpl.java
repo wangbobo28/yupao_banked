@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yupi.yupao.common.ErrorCode;
+import com.yupi.yupao.contant.UserConstant;
 import com.yupi.yupao.exception.BusinessException;
 import com.yupi.yupao.model.User;
 import com.yupi.yupao.service.UserService;
@@ -21,6 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
+
+import static com.yupi.yupao.contant.UserConstant.ADMIN_ROLE;
+import static com.yupi.yupao.contant.UserConstant.USER_LOGIN_STATE;
 
 /**
 * @author LENOVO
@@ -199,6 +203,61 @@ public class UserServiceImpl extends ServiceImpl<TagMapper, User>
     @Override
     public User searchUserByName(String username) {
         return userMapper.selectByName(username);
+    }
+
+    /**
+     * 获取用户登录信息
+     * @param httpRequest
+     * @return
+     */
+    @Override
+    public User getLoginUser(HttpServletRequest httpRequest) {
+        if (httpRequest == null){
+            return null;
+        }
+        Object attribute = httpRequest.getSession().getAttribute(USER_LOGIN_STATE);
+        if (attribute == null){
+            throw new BusinessException(ErrorCode.NO_AUTH);
+        }
+        return (User)attribute;
+    }
+
+    /**
+     * 更新用户信息
+     * @param user
+     * @param loginUser
+     * @return
+     */
+    @Override
+    public int updateUser(User user, User loginUser) {
+        Long userId = user.getId();
+        if (userId <= 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        if (!isAdmin(loginUser) && userId != loginUser.getId()){
+            throw new BusinessException(ErrorCode.NO_AUTH);
+        }
+        return userMapper.updateById(user);
+    }
+
+    /**
+     * 判断当前用户是否为管理员
+     * @param user
+     * @return
+     */
+    public boolean isAdmin(User user){
+        return user != null && user.getUserRole() == UserConstant.ADMIN_ROLE;
+    }
+    /**
+     * 判断用户是否是管理员
+     * @param request
+     * @return
+     */
+    public boolean isAdmin(HttpServletRequest request) {
+        //仅管理员查询
+        Object attribute = request.getSession().getAttribute(USER_LOGIN_STATE);
+        User user = (User) attribute;
+        return user != null && user.getUserRole() == ADMIN_ROLE;
     }
 
 }

@@ -22,9 +22,21 @@ public interface UserService extends IService<User> {
      */
     long userRegister(String userAccount, String userPassword, String checkPassword);
 
+    /**
+     * 用户登录
+     * @param userAccount
+     * @param userPassword
+     * @param httpServletRequest
+     * @return
+     */
     User userLogin(String userAccount,String userPassword, HttpServletRequest httpServletRequest);
 
 
+    /**
+     * 获取安全用户
+     * @param originUser
+     * @return
+     */
     User getSafetyUser(User originUser);
 
     /**
@@ -34,5 +46,36 @@ public interface UserService extends IService<User> {
      */
     List<User> searchUserByTags(List<String> tagList);
 
+    /**
+     * 根据姓名搜索用户
+     * @param name
+     * @return
+     */
     User searchUserByName(String name);
+
+    /**
+     * 获取当前用户登录信息
+     */
+    User getLoginUser(HttpServletRequest httpRequest);
+
+    /**
+     * 更新当前用户信息
+     */
+    int updateUser(User user,User LoginUser);
+
+
+    /**
+     * 是否是管理员
+     * @param user
+     * @return
+     */
+    boolean isAdmin(User user);
+
+    /**
+     * 是否是管理员
+     * @param request
+     * @return
+     */
+    boolean isAdmin(HttpServletRequest request);
+
 }

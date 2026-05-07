@@ -4,9 +4,12 @@ import java.util.List;
 
 //import com.yupao.usercenter.model.User;
 //import com.yupao.usercenter.service.UserService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.yupi.yupao.mapper.TagMapper;
 import com.yupi.yupao.model.User;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
@@ -14,6 +17,9 @@ class UserServiceTest {
 
     @Resource
     private UserService userservice;
+
+    @Autowired
+    private TagMapper tagMapper;
 
 //    @Resource
 //    private User user;
@@ -57,5 +63,19 @@ class UserServiceTest {
 //        Assert.assertNotnull(userList);
         System.out.println("////////////////////////////////////////////////////////");
         System.out.println(userList);
+    }
+
+    @Test
+    public void testUpdateUser(){
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        userQueryWrapper.eq("username", "wangbo");
+        List<User> users = tagMapper.selectList(userQueryWrapper);
+        System.out.println(users);
+//        User user = new User();
+//        user.setId(21L);
+//        user.setUsername("wangli");
+//        user.setUserAccount("wangli123");
+//        int i = userservice.updateUser(user);
+//        System.out.println("修改成功的数据条数"+i);
     }
 }

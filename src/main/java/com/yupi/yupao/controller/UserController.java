@@ -140,10 +140,32 @@ public class UserController {
         return ResultUtils.success(user);
     }
 
-    private boolean isAdmin(HttpServletRequest request) {
-        //仅管理员查询
-        Object attribute = request.getSession().getAttribute(USER_LOGIN_STATE);
-        User user = (User) attribute;
-        return user != null && user.getUserRole() == ADMIN_ROLE;
+    /**
+     * 修改用户信息
+     * @param user
+     * @param request
+     * @return
+     */
+    @PostMapping("/update")
+    public BaseResponse<Integer> updateUser(@RequestBody User user,HttpServletRequest request){
+        //检验参数是否为空
+        if (user == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        int result = userService.updateUser(user, loginUser);
+        return ResultUtils.success(result);
     }
+
+    /**
+     * 查询所有用户信息
+     * @return
+     */
+    @GetMapping("/recommend")
+    public BaseResponse<List<User>> selectUsers(){
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        List<User> list = userService.list(userQueryWrapper);
+        return ResultUtils.success(list);
+    }
+
 }
