@@ -1,6 +1,7 @@
 package com.yupi.yupao.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yupi.yupao.common.BaseResponse;
 import com.yupi.yupao.common.ErrorCode;
 import com.yupi.yupao.common.ResultUtils;
@@ -9,25 +10,33 @@ import com.yupi.yupao.model.User;
 import com.yupi.yupao.model.request.UserLoginRequest;
 import com.yupi.yupao.model.request.UserRegisterRequest;
 import com.yupi.yupao.service.UserService;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
-import static com.yupi.yupao.contant.UserConstant.ADMIN_ROLE;
-import static com.yupi.yupao.contant.UserConstant.USER_LOGIN_STATE;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/user")
 @CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
+@Slf4j
 public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Resource
+    private RedisTemplate<String,Object> redisTemplate;
 
     /**
      * 用户注册
@@ -162,10 +171,36 @@ public class UserController {
      * @return
      */
     @GetMapping("/recommend")
-    public BaseResponse<List<User>> selectUsers(){
+    public BaseResponse<Page<User>> selectUsers(@RequestParam(value = "pageSize",defaultValue = "10") long pageSize,
+                                                @RequestParam(value = "pageNum",defaultValue = "1")long pageNum,
+                                                HttpServletRequest request){
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+        User loginUser = userService.getLoginUser(request);
+        //如果有缓存 直接读缓存
+        String redisKey = String.format("yupao:user:recommend:%s", loginUser.getId());
+        Page<User> userPage = (Page<User>) valueOperations.get(redisKey);
+        if (userPage != null){
+            return ResultUtils.success(userPage);
+        }
+        // 1. 参数校验（避免恶意请求）
+        if (pageSize <= 0) {
+            pageSize = 10;
+        }
+        if (pageSize > 100) {  // 限制最大100条，防止性能问题
+            pageSize = 100;
+        }
+        if (pageNum <= 0) {
+            pageNum = 1;
+        }
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
-        List<User> list = userService.list(userQueryWrapper);
-        return ResultUtils.success(list);
+        userPage = userService.page(new Page<>(pageNum,pageSize),userQueryWrapper);
+        try {
+            valueOperations.set(redisKey,userPage,10, TimeUnit.MINUTES);
+        } catch (Exception e) {
+            log.error("redis is set key error");
+        }
+        return ResultUtils.success(userPage);
     }
+
 
 }

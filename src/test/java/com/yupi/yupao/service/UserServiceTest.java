@@ -1,16 +1,19 @@
 package com.yupi.yupao.service;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 //import com.yupao.usercenter.model.User;
 //import com.yupao.usercenter.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.yupi.yupao.mapper.TagMapper;
+import com.yupi.yupao.mapper.UserMapper;
 import com.yupi.yupao.model.User;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 @SpringBootTest
 class UserServiceTest {
@@ -19,7 +22,10 @@ class UserServiceTest {
     private UserService userservice;
 
     @Autowired
-    private TagMapper tagMapper;
+    private UserMapper userMapper;
+
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate;
 
 //    @Resource
 //    private User user;
@@ -69,7 +75,7 @@ class UserServiceTest {
     public void testUpdateUser(){
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
         userQueryWrapper.eq("username", "wangbo");
-        List<User> users = tagMapper.selectList(userQueryWrapper);
+        List<User> users = userMapper.selectList(userQueryWrapper);
         System.out.println(users);
 //        User user = new User();
 //        user.setId(21L);
@@ -77,5 +83,38 @@ class UserServiceTest {
 //        user.setUserAccount("wangli123");
 //        int i = userservice.updateUser(user);
 //        System.out.println("修改成功的数据条数"+i);
+    }
+    @Test
+    public void insertUsers(){
+        long max = 1000000;
+        ArrayList<User> users = new ArrayList<>();
+        for (int i = 0; i < max; i++) {
+            User user = new User();
+//            user.setId(1L);
+            user.setUsername("假鱼皮");
+            user.setUserAccount("123456789");
+            user.setAvatarUrl("https://pic2.zhimg.com/v2-86b356a32e20cb5f91c3568614df54a3_1440w.jpg");
+            user.setGender(1);
+            user.setUserPassword("123456");
+            user.setPhone("13800138000");
+            user.setEmail("wangbo@example.com");
+            user.setTags("[\"Java\",\"Spring\",\"MySQL\"]");
+            user.setStatus(0);
+            user.setUserRole(0);  // 0-普通用户，1-管理员
+//            user.setCreateTime(new Date());
+//            user.setUpdateTime(new Date());
+            user.setIsDelete(0);
+            users.add(user);
+        }
+        boolean b = userservice.saveBatch(users, 50000);
+
+    }
+
+    @Test
+    void testRedis(){
+        ValueOperations<String, Object> stringObjectValueOperations = redisTemplate.opsForValue();
+        stringObjectValueOperations.set("test","连接到redis数据库了");
+        String test = (String)stringObjectValueOperations.get("test");
+        System.out.println(test);
     }
 }

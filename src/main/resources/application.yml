@@ -11,29 +11,20 @@ spring:
       host: localhost      # 只有一个就写这个
       port: 6379           # 只有一个，但写出来清晰
       password:            # 留空，但写出来说明“我没设密码”
-  session:
-    timeout: 86400
-    redis:
-      flush-mode: on_save
-      namespace: spring:session
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
 
 server:
   port: 8080
-  servlet:
-    session:
-      cookie:
-        domain:
 
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-#  global-config:
-#    db-config:
-#      logic-delete-field: isDelete
-#      logic-delete-value: 1
-#      logic-not-delete-value: 0
+  global-config:
+    db-config:
+      logic-delete-field: isDelete
+      logic-delete-value: 1
+      logic-not-delete-value: 0
 

@@ -6,4 +6,6 @@
 #  "userPassword": "123456789"
 #}
 
-GET http://localhost:8080/api/user/recommend
+#GET http://localhost:8080/api/user/recommend
+
+GET http://localhost:8080/api/user/redis/test

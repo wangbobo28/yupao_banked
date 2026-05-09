@@ -11,10 +11,9 @@ import com.google.gson.reflect.TypeToken;
 import com.yupi.yupao.common.ErrorCode;
 import com.yupi.yupao.contant.UserConstant;
 import com.yupi.yupao.exception.BusinessException;
+import com.yupi.yupao.mapper.UserMapper;
 import com.yupi.yupao.model.User;
 import com.yupi.yupao.service.UserService;
-import com.yupi.yupao.mapper.TagMapper;
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +23,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 
 import static com.yupi.yupao.contant.UserConstant.ADMIN_ROLE;
-import static com.yupi.yupao.contant.UserConstant.USER_LOGIN_STATE;
 
 /**
 * @author LENOVO
@@ -33,7 +31,7 @@ import static com.yupi.yupao.contant.UserConstant.USER_LOGIN_STATE;
 */
 @Service
 @Slf4j
-public class UserServiceImpl extends ServiceImpl<TagMapper, User>
+public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     implements UserService {
 
     /**
@@ -48,7 +46,7 @@ public class UserServiceImpl extends ServiceImpl<TagMapper, User>
      */
     private static String USER_LOGIN_STATE = "userLoginState";
     @Autowired
-    private TagMapper userMapper;
+    private UserMapper userMapper;
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
         //1，校验
@@ -194,16 +192,21 @@ public class UserServiceImpl extends ServiceImpl<TagMapper, User>
         }).map(this::getSafetyUser).collect(Collectors.toList());
     }
 
+    @Override
+    public User searchUserByName(String name) {
+        return null;
+    }
+
     /**
      *
      * 根据姓名查询用户
      * @param username
      * @return
      */
-    @Override
-    public User searchUserByName(String username) {
-        return userMapper.selectByName(username);
-    }
+//    @Override
+//    public User searchUserByName(String username) {
+//        return userMapper.selectByName(username);
+//    }
 
     /**
      * 获取用户登录信息
