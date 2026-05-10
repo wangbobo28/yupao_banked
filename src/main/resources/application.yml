@@ -11,16 +11,21 @@ spring:
       host: localhost      # 只有一个就写这个
       port: 6379           # 只有一个，但写出来清晰
       password:            # 留空，但写出来说明“我没设密码”
+      redisson:
+        file: classpath:redisson-single.yml
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
 
 server:
   port: 8080
+  servlet:
+    session:
+      timeout: 1d
 
 mybatis-plus:
   configuration:
-    map-underscore-to-camel-case: true
+    map-underscore-to-camel-case: false
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
