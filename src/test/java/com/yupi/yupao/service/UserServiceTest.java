@@ -8,6 +8,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yupi.yupao.mapper.UserMapper;
 import com.yupi.yupao.model.User;
+import com.yupi.yupao.model.enums.TeamStatusEnum;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,9 +113,8 @@ class UserServiceTest {
 
     @Test
     void testRedis(){
-        ValueOperations<String, Object> stringObjectValueOperations = redisTemplate.opsForValue();
-        stringObjectValueOperations.set("test","连接到redis数据库了");
-        String test = (String)stringObjectValueOperations.get("test");
-        System.out.println(test);
+        System.out.println(TeamStatusEnum.getEnumByValue(0));
     }
+
+
 }

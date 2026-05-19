@@ -42,9 +42,9 @@
 #     * 密码
 #     */
 #    private String password;
-POST http://localhost:8080/team/addTeam
+POST http://localhost:8080/api/team/addTeam
 Content-Type: application/json
-Cookie: JSESSIONID=98DABC7D148B90BA633F0A8C93D818F0
+Cookie: JSESSIONID=6A66F5E659FF51656912EFA58F048946
 
 {
     "name": "Java学习小组",

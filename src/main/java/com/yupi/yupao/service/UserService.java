@@ -2,6 +2,7 @@ package com.yupi.yupao.service;
 
 import com.yupi.yupao.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.yupi.yupao.model.request.TeamQuitRequest;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
@@ -77,5 +78,4 @@ public interface UserService extends IService<User> {
      * @return
      */
     boolean isAdmin(HttpServletRequest request);
-
 }

@@ -3,6 +3,7 @@ package com.yupi.yupao.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yupi.yupao.common.BaseResponse;
+import com.yupi.yupao.common.DeleteRequest;
 import com.yupi.yupao.common.ErrorCode;
 import com.yupi.yupao.common.ResultUtils;
 import com.yupi.yupao.exception.BusinessException;
@@ -10,6 +11,10 @@ import com.yupi.yupao.model.Team;
 import com.yupi.yupao.model.User;
 import com.yupi.yupao.model.dto.TeamQuery;
 import com.yupi.yupao.model.request.TeamAddRequest;
+import com.yupi.yupao.model.request.TeamJoinRequest;
+import com.yupi.yupao.model.request.TeamQuitRequest;
+import com.yupi.yupao.model.request.TeamUpdateRequest;
+import com.yupi.yupao.model.vo.TeamUserVO;
 import com.yupi.yupao.service.TeamService;
 import com.yupi.yupao.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +27,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("team")
+@RequestMapping("/api/team")
 @Slf4j
 public class TeamController {
 
@@ -47,36 +52,21 @@ public class TeamController {
         long teamId = teamService.addTeam(team,loginUser);
         return ResultUtils.success(teamId);
     }
-    /**
-     * 删除队伍
-     *
-     */
-    @PostMapping("/deleteTeam")
-    public BaseResponse<Boolean> deleteTeam(@RequestBody Team team){
-        if (team == null){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        System.out.println(team.getId());
-        System.out.println(team);
-        boolean result = teamService.removeById(team);
-        if (!result){
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"系统内部异常");
-        }
-        return ResultUtils.success(true);
-    }
+
 
     /**
      * 修改队伍
      *
      */
-    @PostMapping("/updateTeam")
-    public BaseResponse<Boolean> updateTeam(@RequestBody Team team){
-        if (team == null){
+    @PostMapping("/update")
+    public BaseResponse<Boolean> updateTeam(@RequestBody TeamUpdateRequest teamUpdateRequest,HttpServletRequest request){
+        if (teamUpdateRequest == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean save = teamService.updateById(team);
-        if (!save){
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"系统内部异常");
+
+        boolean b = teamService.updateTeam(teamUpdateRequest, request);
+        if (!b){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"修改用户信息失败");
         }
         return ResultUtils.success(true);
     }
@@ -100,14 +90,13 @@ public class TeamController {
      *
      */
     @GetMapping("/list")
-    public BaseResponse<List<Team>> getTeams(TeamQuery teamQuery){
+    public BaseResponse<List<TeamUserVO>> getTeams(TeamQuery teamQuery,@RequestParam Integer status){
         if (teamQuery == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Team team = new Team();
         BeanUtils.copyProperties(team,teamQuery);
-        QueryWrapper<Team> teamQueryWrapper = new QueryWrapper<>(team);
-        List<Team> teamList = teamService.list(teamQueryWrapper);
+        List<TeamUserVO> teamList = teamService.listTeams(teamQuery,true,status);
         return ResultUtils.success(teamList);
     }
     /**
@@ -125,5 +114,45 @@ public class TeamController {
         QueryWrapper<Team> teamQueryWrapper = new QueryWrapper<>(team);
         Page<Team> resultPage = teamService.page(page,teamQueryWrapper);
         return ResultUtils.success(resultPage);
+    }
+
+    /**
+     * 加入用户
+     */
+    @PostMapping("/join")
+    public BaseResponse<Boolean> joinTeam(@RequestBody TeamJoinRequest teamJoinRequest,HttpServletRequest httpServletRequest){
+        if (teamJoinRequest == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(httpServletRequest);
+        boolean result = teamService.joinTeam(teamJoinRequest,loginUser);
+        return ResultUtils.success(result);
+    }
+
+    @PostMapping("/quit")
+    public BaseResponse<Boolean> quitTeam(@RequestBody TeamQuitRequest teamQuitRequest,HttpServletRequest request){
+        if (teamQuitRequest == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        Boolean result = teamService.quitTeam(teamQuitRequest,loginUser);
+        return ResultUtils.success(result);
+    }
+    /**
+     * 删除队伍
+     *
+     */
+    @PostMapping("/delete")
+    public BaseResponse<Boolean> deleteTeam(@RequestBody DeleteRequest deleteRequest,HttpServletRequest request){
+        if (deleteRequest == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        Long id = deleteRequest.getId();
+        boolean result = teamService.deleteTeam(id,loginUser);
+        if (!result){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"系统内部异常");
+        }
+        return ResultUtils.success(true);
     }
 }

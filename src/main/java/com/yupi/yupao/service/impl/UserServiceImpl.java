@@ -13,7 +13,10 @@ import com.yupi.yupao.contant.UserConstant;
 import com.yupi.yupao.exception.BusinessException;
 import com.yupi.yupao.mapper.UserMapper;
 import com.yupi.yupao.model.User;
+import com.yupi.yupao.model.UserTeam;
+import com.yupi.yupao.model.request.TeamQuitRequest;
 import com.yupi.yupao.service.UserService;
+import com.yupi.yupao.service.UserTeamService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +48,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      * 用户登录态键
      */
     private static String USER_LOGIN_STATE = "userLoginState";
+
+    @Autowired
+    public UserTeamService userTeamService;
     @Autowired
     private UserMapper userMapper;
     @Override
@@ -262,5 +268,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = (User) attribute;
         return user != null && user.getUserRole() == ADMIN_ROLE;
     }
+
+
 
 }
