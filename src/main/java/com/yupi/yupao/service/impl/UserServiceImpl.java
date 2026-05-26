@@ -225,6 +225,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return null;
         }
         Object attribute = httpRequest.getSession().getAttribute(USER_LOGIN_STATE);
+        System.out.println(httpRequest.getSession());
         if (attribute == null){
             throw new BusinessException(ErrorCode.NO_AUTH);
         }

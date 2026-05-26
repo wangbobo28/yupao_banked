@@ -129,6 +129,12 @@ public class TeamController {
         return ResultUtils.success(result);
     }
 
+    /**
+     *  退出队伍
+     * @param teamQuitRequest
+     * @param request
+     * @return
+     */
     @PostMapping("/quit")
     public BaseResponse<Boolean> quitTeam(@RequestBody TeamQuitRequest teamQuitRequest,HttpServletRequest request){
         if (teamQuitRequest == null){
@@ -154,5 +160,34 @@ public class TeamController {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"系统内部异常");
         }
         return ResultUtils.success(true);
+    }
+    /**
+     * 获取我创建的队伍
+     */
+    @GetMapping("/list/my/create")
+    public BaseResponse<List<TeamUserVO>> listTeams(TeamQuery teamQuery, HttpServletRequest request){
+        if (teamQuery == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        teamQuery.setUserId(loginUser.getId());
+        boolean admin = userService.isAdmin(loginUser);
+        List<TeamUserVO> teamList = teamService.listMyTeams(teamQuery,admin);
+        return ResultUtils.success(teamList);
+    }
+    /**
+     * 查找加入的队伍
+     */
+    @GetMapping("/list/my/join")
+    public BaseResponse<List<Team>> listTeams(HttpServletRequest request){
+        Long userId = userService.getLoginUser(request).getId();
+        if(userId == null){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+        }
+        List<Team> teams = teamService.selectByUserId(userId);
+        if(teams == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        return ResultUtils.success(teams);
     }
 }

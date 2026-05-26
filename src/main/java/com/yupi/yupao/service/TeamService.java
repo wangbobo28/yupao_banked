@@ -33,6 +33,12 @@ public interface TeamService extends IService<Team> {
     List<TeamUserVO> listTeams(TeamQuery teamQuery, boolean isAdmin,Integer statusRequest);
 
     /**
+     * 查询队伍
+     */
+    List<TeamUserVO> listMyTeams(TeamQuery teamQuery, boolean isAdmin);
+
+
+    /**
      * 修改队伍信息
      * @param teamUpdateRequest
      * @param request
@@ -60,4 +66,9 @@ public interface TeamService extends IService<Team> {
      * @return
      */
     boolean deleteTeam(Long id, User loginUser);
+
+    /**
+     * 通过用户id查队伍
+     */
+    List<Team> selectByUserId(long userId);
 }

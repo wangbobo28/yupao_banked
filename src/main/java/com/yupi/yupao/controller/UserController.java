@@ -92,7 +92,10 @@ public class UserController {
         String userPassword = userLoginRequest.getUserPassword();
         final String SALT = "wangbo";
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
-//        if (StringUtils.isAnyBlank(userAccount, userPassword)) {
+        System.out.println(encryptPassword);
+        if (StringUtils.isAnyBlank(userAccount, userPassword)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
         if (userAccount == null || userPassword == null) {
             return ResultUtils.error(ErrorCode.PARAMS_ERROR);
         }
@@ -201,6 +204,5 @@ public class UserController {
         }
         return ResultUtils.success(userPage);
     }
-
 
 }

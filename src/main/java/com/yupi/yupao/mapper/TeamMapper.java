@@ -4,6 +4,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yupi.yupao.model.Team;
 import com.yupi.yupao.model.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 
 /**
@@ -15,7 +19,11 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface TeamMapper extends BaseMapper<Team> {
 
-
+        @Select("SELECT t.* FROM team t  \n" +
+                "            INNER JOIN user_team ut ON t.id = ut.teamId\n" +
+                "            WHERE ut.userId = #{userId} AND t.isDelete = 0\n" +
+                "            ORDER BY t.createTime DESC")
+    List<Team> selectTeamByUserId(@Param("userId") Long userId);
 
 }
 
