@@ -110,6 +110,11 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.5.14</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version> <!-- 使用最新稳定版 -->
+        </dependency>
         <!-- 分页插件依赖（3.5.9 版本后需要单独引入） -->
         <dependency>
             <groupId>com.baomidou</groupId>
